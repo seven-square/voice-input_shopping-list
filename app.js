@@ -3,19 +3,20 @@
 const liItemDiv = document.querySelector(".li-item-div");
 const header1 = document.querySelector(".header1");
 
-const listContainer = document.querySelector(".list-container");
+// const listContainer = document.querySelector(".list-container");
 const shoppingListContainer = document.createElement("div");
 shoppingListContainer.classList.add("shopping-list-container");
 
 const yourListSpan = document.createElement("span");
 yourListSpan.classList.add("your-list");
-// yourListSpan.textContent = "Your List";
+yourListSpan.textContent = "Your List";
+shoppingListContainer.appendChild(yourListSpan);
 
 const shoppingList = document.createElement("ul");
 shoppingList.classList.add("shopping-list");
-shoppingListContainer.appendChild(yourListSpan);
-shoppingListContainer.appendChild(shoppingList);
+
 const main = document.querySelector(".main-body");
+
 let arrayOfShoppingLists = [];
 let arrayOfShoppingListsItems = [];
 let remainingListObject = {};
@@ -23,35 +24,6 @@ let remainingListObject = {};
 // Items to Shop
 // first off, select the section holding it so you can have different Divs based on the shopping-list-name, you feel me?
 const itemsContainer = document.querySelector(".items-container");
-
-// const itemsToShop = document.createElement("div");
-// itemsToShop.classList.add("shopping-list-container");
-// itemsToShop.classList.add("items-to-shop");
-
-// const shoppingListName = document.createElement("p");
-// shoppingListName.classList.add("shopping-list-name");
-// itemsToShop.appendChild(shoppingListName);
-
-//Item and Quantity DIV
-// const itemQuantity = document.createElement("div");
-// itemQuantity.classList.add("item-quantity");
-
-// const itemHeader = document.createElement("p");
-// itemHeader.classList.add("item-header");
-
-// const quantityHeader = document.createElement("p");
-// quantityHeader.classList.add("quantity-header");
-
-// itemQuantity.appendChild(itemHeader);
-// itemQuantity.appendChild(quantityHeader);
-
-// Creating the Ordered List- OL and its descendants
-// const itemsList = document.createElement("ol");
-// itemsList.classList.add("items-list");
-
-// const shoppingListInDiv = document
-//   .querySelector(".shopping-list-div")
-//   .querySelector("li");
 
 // select API
 const speechRecognition =
@@ -68,55 +40,131 @@ recognition.addEventListener("end", () => {
 recognition.start();
 recognition.continuous = true;
 console.log("hi");
+
+let shoppingListLi;
+let shoppingListDiv;
+let shoppingListId;
+
+let arrayOfShoppingListsAndTheirItems;
+let shoppingListArray;
+let listNameObject;
+let itemsArray;
+let itemQuantityObj;
+let id;
+let nameOfList;
+
+// when the document loads, call this function to display existing shopping lists, and possibly, their items
+document.addEventListener("DOMContentLoaded", getShoppingList);
 recognition.addEventListener("result", (e) => {
   // ==================================================================================
   // Create a new List
-  let shoppingListLi;
-  let shoppingListDiv;
   const current = e.resultIndex;
   // console.log(e);
   let transcript = e.results[current][0].transcript;
   transcript = transcript.toLowerCase();
   console.log(e.results[current][0].transcript);
-  // transcript = "add a record for bread quantity is 5 into list";
-  if (transcript.includes("create") && transcript.includes("called")) {
-    // create a new list called schooling
-    header1.style.display = "none";
-    yourListSpan.textContent = "Your List";
 
+  if (transcript.includes("create") && transcript.includes("called")) {
     let list = transcript.split(" ");
 
     console.log(list);
 
-    shoppingListDiv = document.createElement("div");
-    shoppingListDiv.classList.add("shopping-list-div");
-    shoppingListLi = document.createElement("li");
-    shoppingListDiv.appendChild(shoppingListLi);
     for (i = 0; i < list.length; i++) {
+      listNameObject = {};
       if (list[i] == "called") {
-        let nameOfList;
+        nameOfList;
         nameOfList = list[i + 1].charAt(0).toUpperCase() + list[i + 1].slice(1);
-        shoppingListLi.textContent = nameOfList;
+
+        id = parseInt(("" + Math.random()).substring(2, 5));
 
         arrayOfShoppingLists.push(nameOfList);
         remainingListObject[nameOfList] = nameOfList;
 
+        // for (m = 0; m < arrayOfShoppingListsAndTheirItems.length; m++) {
+        // create a new list called schooling
+        header1.style.display = "none";
+
+        // create shoppingListDiv
+        shoppingListDiv = document.createElement("div");
+        shoppingListDiv.classList.add("shopping-list-div");
+
+        // create shopping List li to house the name of the shopping list
+        shoppingListLi = document.createElement("li");
+        shoppingListDiv.appendChild(shoppingListLi);
+
+        // create li to house the id of the shopping list
+        shoppingListId = document.createElement("li");
+        shoppingListId.classList.add("id");
+        shoppingListDiv.appendChild(shoppingListId);
+
         if (list[i + 2]) {
-          shoppingListLi.textContent = nameOfList + list[i + 2];
+          nameOfList = nameOfList + list[i + 2];
         }
+
+        shoppingListLi.textContent = nameOfList;
+
+        // SAVE TO LOCAL STORAGE
+        // ***********************************************************************************************************************
+        saveShoppingList(id, nameOfList);
+        // ***********************************************************************************************************************
+
+        shoppingListId.textContent = id;
+
         shoppingList.appendChild(shoppingListDiv);
+        shoppingListContainer.appendChild(shoppingList);
         main.appendChild(shoppingListContainer);
+
+        // ITEMS TO SHOP
+        const itemsToShop = document.createElement("div");
+        itemsToShop.classList.add("shopping-list-container");
+        itemsToShop.classList.add("items-to-shop");
+
+        const shoppingListName = document.createElement("p");
+        shoppingListName.classList.add("shopping-list-name");
+        itemsToShop.appendChild(shoppingListName);
+
+        // Item and Quantity DIV
+        const itemQuantity = document.createElement("div");
+        itemQuantity.classList.add("item-quantity");
+
+        const itemHeader = document.createElement("p");
+        itemHeader.classList.add("item-header");
+
+        const quantityHeader = document.createElement("p");
+        quantityHeader.classList.add("quantity-header");
+
+        itemQuantity.appendChild(itemHeader);
+        itemQuantity.appendChild(quantityHeader);
+
+        // Creating the Ordered List- OL and its descendants
+        const itemsList = document.createElement("ol");
+        itemsList.classList.add("items-list");
+
+        // const shoppingListInDiv = document
+        //   .querySelector(".shopping-list-div")
+        //   .querySelector("li");
+        // }
+        console.log(
+          arrayOfShoppingLists,
+          remainingListObject,
+          arrayOfShoppingListsAndTheirItems
+        );
+        // }
+        // shoppingList.appendChild(shoppingListDiv);
+        // main.appendChild(shoppingListContainer);
       }
     }
 
-    console.log(arrayOfShoppingLists, remainingListObject);
-
     // shoppingList.appendChild(shoppingListDiv);
     console.log(transcript);
-    console.log(shoppingListLi, shoppingListDiv);
+    console.log(
+      shoppingListLi,
+      shoppingListDiv,
+      arrayOfShoppingListsAndTheirItems
+    );
   }
 
-  // ===================================================================================
+  // =================================================
   //   Delete list
   if (transcript.includes("delete")) {
     let list = transcript.split(" ");
@@ -460,3 +508,71 @@ function saveLocalShoppingList(content, id, items) {
 function getLocalShoppingList(content, id, items) {}
 function removeLocalShoppingList(content, id, items) {}
 */
+
+function saveShoppingList(id, nameOfList) {
+  if (localStorage.getItem("arrayOfShoppingListsAndTheirItems") === null) {
+    arrayOfShoppingListsAndTheirItems = [];
+  } else {
+    arrayOfShoppingListsAndTheirItems = JSON.parse(
+      localStorage.getItem("arrayOfShoppingListsAndTheirItems")
+    );
+  }
+
+  //  modify arrayOfShoppingListsAndTheirItems as appropriate and save it back to localStorage
+
+  listNameObject["list_name"] = nameOfList;
+  listNameObject["ID"] = id;
+  shoppingListArray = [];
+
+  shoppingListArray.push(listNameObject);
+  arrayOfShoppingListsAndTheirItems.push(shoppingListArray);
+
+  localStorage.setItem(
+    "arrayOfShoppingListsAndTheirItems",
+    JSON.stringify(arrayOfShoppingListsAndTheirItems)
+  );
+}
+
+function getShoppingList() {
+  if (localStorage.getItem("arrayOfShoppingListsAndTheirItems") === null) {
+    // do we have any? no, okay, create a new one
+    arrayOfShoppingListsAndTheirItems = [];
+  } else {
+    // we have some? alright, get it back
+    arrayOfShoppingListsAndTheirItems = JSON.parse(
+      localStorage.getItem("arrayOfShoppingListsAndTheirItems")
+    );
+  }
+
+  // CREATE THE SHOPPING LIST SECTION and ol..
+  if (arrayOfShoppingListsAndTheirItems.length !== 0) {
+    header1.style.display = "none";
+    yourListSpan.textContent = "Your List";
+  }
+  // const shoppingList = document.createElement("ul");
+  // shoppingList.classList.add("shopping-list");
+
+  // Create the Div that'd house the Shopping list li, id and their content
+
+  for (let i = 0; i < arrayOfShoppingListsAndTheirItems.length; i++) {
+    // create shoppingListDiv
+    shoppingListDiv = document.createElement("div");
+    shoppingListDiv.classList.add("shopping-list-div");
+
+    // create shopping List li to house the name of the shopping list
+    shoppingListLi = document.createElement("li");
+    shoppingListDiv.appendChild(shoppingListLi);
+
+    // create li to house the id of the shopping list
+    shoppingListId = document.createElement("li");
+    shoppingListId.classList.add("id");
+    shoppingListDiv.appendChild(shoppingListId);
+
+    shoppingListLi.textContent =
+      arrayOfShoppingListsAndTheirItems[i][0]["list_name"];
+    shoppingListId.textContent = arrayOfShoppingListsAndTheirItems[i][0]["ID"];
+    shoppingList.appendChild(shoppingListDiv);
+    shoppingListContainer.appendChild(shoppingList);
+    main.appendChild(shoppingListContainer);
+  }
+}
