@@ -23,6 +23,34 @@ let remainingListObject = {};
 // first off, select the section holding it so you can have different Divs based on the shopping-list-name, you feel me?
 const itemsContainer = document.querySelector(".items-container");
 
+const itemsToShop = document.createElement("div");
+itemsToShop.classList.add("shopping-list-container");
+itemsToShop.classList.add("items-to-shop");
+
+const shoppingListName = document.createElement("p");
+shoppingListName.classList.add("shopping-list-name");
+itemsToShop.appendChild(shoppingListName);
+
+// Item and Quantity DIV
+const itemQuantity = document.createElement("div");
+itemQuantity.classList.add("item-quantity");
+
+const itemHeader = document.createElement("p");
+itemHeader.classList.add("item-header");
+itemHeader.textContent = "Item";
+
+const quantityHeader = document.createElement("p");
+quantityHeader.classList.add("quantity-header");
+quantityHeader.textContent = "Quantity";
+
+itemQuantity.appendChild(itemHeader);
+itemQuantity.appendChild(quantityHeader);
+
+itemsToShop.appendChild(itemQuantity);
+
+const itemsList = document.createElement("ol");
+itemsList.classList.add("items-list");
+
 // select API
 const speechRecognition =
   window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -30,7 +58,6 @@ const speechRecognition =
 const recognition = new speechRecognition();
 // recognition.interimResults = true;
 
-let itemsContainerChildrenObject = {};
 // start the recognition as it ends
 recognition.addEventListener("end", () => {
   recognition.start();
@@ -112,30 +139,17 @@ recognition.addEventListener("result", (e) => {
         main.appendChild(shoppingListContainer);
 
         // ITEMS TO SHOP
-        const itemsToShop = document.createElement("div");
-        itemsToShop.classList.add("shopping-list-container");
-        itemsToShop.classList.add("items-to-shop");
+        // const itemsToShop = document.createElement("div");
+        // itemsToShop.classList.add("shopping-list-container");
+        // itemsToShop.classList.add("items-to-shop");
 
-        const shoppingListName = document.createElement("p");
-        shoppingListName.classList.add("shopping-list-name");
-        itemsToShop.appendChild(shoppingListName);
-
-        // Item and Quantity DIV
-        const itemQuantity = document.createElement("div");
-        itemQuantity.classList.add("item-quantity");
-
-        const itemHeader = document.createElement("p");
-        itemHeader.classList.add("item-header");
-
-        const quantityHeader = document.createElement("p");
-        quantityHeader.classList.add("quantity-header");
-
-        itemQuantity.appendChild(itemHeader);
-        itemQuantity.appendChild(quantityHeader);
+        // const shoppingListName = document.createElement("p");
+        // shoppingListName.classList.add("shopping-list-name");
+        // itemsToShop.appendChild(shoppingListName);
 
         // Creating the Ordered List- OL and its descendants
-        const itemsList = document.createElement("ol");
-        itemsList.classList.add("items-list");
+        // const itemsList = document.createElement("ol");
+        // itemsList.classList.add("items-list");
 
         console.log(
           arrayOfShoppingLists,
@@ -221,19 +235,22 @@ recognition.addEventListener("result", (e) => {
 
         // save the item and it's quantity to local storage
         saveItemWithQuantityToLocalStorage(item, quantity, SLSpecified);
-        // ***************temporarily************
+
+        //Remove the current items present in OL, so that, new items added to another shopping list doesn't add to it
+        removeItemsPresentInOL();
+
+        //call function to display items of the shopping list specified
+        displayItemsOfShoppingList(SLSpecified);
+        // ***************temporarily***, or not (;*********
       }
+
+      /* IF ID WAS SPecified
+      -call function to Save item to local storage 
+      -call function to display items of the list*/
     }
   }
-  //
+
   // identifier = list[j+1]
-
-  // for (let i = 0; i < arrayOfShoppingLists.length; i++) {
-
-  /*for (let i = 0; i < arrayOfShoppingLists.length; i++) {
-          if (
-            arrayOfShoppingLists[i].toLowerCase() === SLSpecified.toLowerCase()
-          ) {*/
 
   // shoppingListName.textContent = arrayOfShoppingLists[i];
   // arrayOfShoppingListsItems.push(arrayOfShoppingLists[i]);
@@ -242,7 +259,7 @@ recognition.addEventListener("result", (e) => {
 
   // place element creation here
   /*if (item && quantity / 1 == quantity) {
-              listContainer.style.display = "none";
+              
 
               if (arrayOfShoppingLists[i] in remainingListObject) {*/
 
@@ -250,105 +267,19 @@ recognition.addEventListener("result", (e) => {
   //   itemsContainer.children[i].style.display = "block";
   // }
   // ****
-  // create a new Div
-
-  /*const itemsToShop = document.createElement("div");
-                itemsToShop.classList.add("shopping-list-container");
-                itemsToShop.classList.add("items-to-shop");*/
 
   // create a new paragraph
 
-  /*const shoppingListName = document.createElement("p");
-                shoppingListName.classList.add("shopping-list-name");
-                itemsToShop.appendChild(shoppingListName);
-                shoppingListName.textContent = arrayOfShoppingLists[i];*/
-
   // create a new quantityItemDiv
 
-  /*const itemQuantity = document.createElement("div");
-                itemQuantity.classList.add("item-quantity");
-
-                const itemHeader = document.createElement("p");
-                itemHeader.classList.add("item-header");
-                itemHeader.textContent = "item";
-
-                const quantityHeader = document.createElement("p");
-                quantityHeader.classList.add("quantity-header");
-                quantityHeader.textContent = "quantity";
-
-                itemQuantity.appendChild(itemHeader);
-                itemQuantity.appendChild(quantityHeader);*/
-
   // CREATE A NEW OL-
-
-  /*const itemsList = document.createElement("ol");
-                itemsList.classList.add("items-list");*/
 
   // You can get a Function here, with the item and quantity parameters
   // create a new li-item-div
 
   // add it to items list
 
-  /*const itemLiDiv = document.createElement("div");
-                itemLiDiv.classList.add("item-li");
-
-                const liItem = document.createElement("li");
-
-                const itemParagraph = document.createElement("p");
-                itemParagraph.classList.add("item");
-                itemParagraph.textContent = item;
-                liItem.appendChild(itemParagraph);
-                itemLiDiv.appendChild(liItem);
-
-                const quantityParagraph = document.createElement("p");
-                quantityParagraph.classList.add("quantity");
-                quantityParagraph.textContent = quantity;
-                itemLiDiv.appendChild(quantityParagraph);
-
-                itemsList.appendChild(itemLiDiv);
-                itemsToShop.appendChild(itemQuantity);
-                itemsToShop.appendChild(itemsList);
-                itemsContainer.appendChild(itemsToShop);
-                delete remainingListObject[arrayOfShoppingLists[i]];
-                console.log(arrayOfShoppingLists, remainingListObject);
-              } else {
-                for (m = 0; m < itemsContainer.children.length; m++) {
-                  if (
-                    SLSpecified.toLowerCase() ==
-                    itemsContainer.children[
-                      m
-                    ].children[0].textContent.toLowerCase()
-                  ) {
-                    //   itemsContainer.children[i].style.display = "block";
-                    const itemLiDiv = document.createElement("div");
-                    itemLiDiv.classList.add("item-li");
-
-                    const liItem = document.createElement("li");
-
-                    const itemParagraph = document.createElement("p");
-                    itemParagraph.classList.add("item");
-                    itemParagraph.textContent = item;
-                    liItem.appendChild(itemParagraph);
-                    itemLiDiv.appendChild(liItem);
-
-                    const quantityParagraph = document.createElement("p");
-                    quantityParagraph.classList.add("quantity");
-                    quantityParagraph.textContent = quantity;
-                    itemLiDiv.appendChild(quantityParagraph);
-
-                    itemsContainer.children[m].children[2].appendChild(
-                      itemLiDiv
-                    );
-
-                    console.log(
-                      itemsContainer.children[m].children[0].textContent
-                    );
-                  }
-                }
-              }
-            }
-
-            // use this while cleaning
+  /* // use this while cleaning
             // itemsToShop = itemsContainer.children[i];
             // itemsList = itemsContainer.children[i].children[2];
             // itemsContainer.children[k].children[2].appendChild(itemLiDiv);
@@ -411,6 +342,16 @@ recognition.addEventListener("result", (e) => {
   //   }
 });
 
+// create function to initiate arrayOfShoppingListsAndTheirItems
+function initiateArrayOfShoppingListsAndTheirItems() {
+  // if (localStorage.getItem("arrayOfShoppingListsAndTheirItems") === null) {
+  //   arrayOfShoppingListsAndTheirItems = [];
+  // } else {
+  //   arrayOfShoppingListsAndTheirItems = JSON.parse(
+  //     localStorage.getItem("arrayOfShoppingListsAndTheirItems")
+  //   );
+  // }
+}
 function saveShoppingList(id, nameOfList) {
   if (localStorage.getItem("arrayOfShoppingListsAndTheirItems") === null) {
     arrayOfShoppingListsAndTheirItems = [];
@@ -507,7 +448,6 @@ function saveItemWithQuantityToLocalStorage(
       localStorage.getItem("arrayOfShoppingListsAndTheirItems")
     );
   }
-
   for (li = 0; li < arrayOfShoppingListsAndTheirItems.length; li++) {
     console.log(arrayOfShoppingListsAndTheirItems[li][0]["list_name"]);
     if (
@@ -545,6 +485,69 @@ function saveItemWithQuantityToLocalStorage(
         "arrayOfShoppingListsAndTheirItems",
         JSON.stringify(arrayOfShoppingListsAndTheirItems)
       );
+    }
+  }
+}
+
+// Create function to remove existing items from Ordered List
+function removeItemsPresentInOL() {
+  // loop through every item in ol to remove them
+  for (itemLI = 0; itemLI < itemsList.children.length; itemLI) {
+    itemsList.children[itemLI].remove();
+  }
+}
+
+// Create function to display items of shopping list from local storage (after they've been added)
+function displayItemsOfShoppingList(specifiedShoppingList) {
+  if (localStorage.getItem("arrayOfShoppingListsAndTheirItems") === null) {
+    arrayOfShoppingListsAndTheirItems = [];
+  } else {
+    arrayOfShoppingListsAndTheirItems = JSON.parse(
+      localStorage.getItem("arrayOfShoppingListsAndTheirItems")
+    );
+  }
+
+  for (arr = 0; arr < arrayOfShoppingListsAndTheirItems.length; arr++) {
+    if (
+      arrayOfShoppingListsAndTheirItems[arr][0]["list_name"] ==
+      specifiedShoppingList
+    ) {
+      for (
+        item = 0;
+        item < arrayOfShoppingListsAndTheirItems[arr][1].length;
+        item++
+      ) {
+        // set display of container containing shopping lists to none
+        shoppingListContainer.style.display = "none";
+
+        //
+        shoppingListName.textContent = specifiedShoppingList;
+
+        // create a new list item Div
+        // append it to OL
+        const itemLiDiv = document.createElement("div");
+        itemLiDiv.classList.add("item-li");
+
+        const liItem = document.createElement("li");
+
+        const itemParagraph = document.createElement("p");
+        itemParagraph.classList.add("item");
+        itemParagraph.textContent =
+          arrayOfShoppingListsAndTheirItems[arr][1][item]["nameOfItem"];
+        liItem.appendChild(itemParagraph);
+        itemLiDiv.appendChild(liItem);
+
+        const quantityParagraph = document.createElement("p");
+        quantityParagraph.classList.add("quantity");
+        quantityParagraph.textContent =
+          arrayOfShoppingListsAndTheirItems[arr][1][item]["quantityOfItem"];
+        itemLiDiv.appendChild(quantityParagraph);
+
+        itemsList.appendChild(itemLiDiv);
+
+        itemsToShop.appendChild(itemsList);
+        itemsContainer.appendChild(itemsToShop);
+      }
     }
   }
 }
