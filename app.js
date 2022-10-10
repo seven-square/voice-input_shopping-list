@@ -183,9 +183,13 @@ recognition.addEventListener("result", (e) => {
             1
           );
           delete remainingListObject[shoppingList.children[i].textContent];
+          let nameOfShoppingListToDelete =
+            shoppingList.children[i].children[0].textContent;
           shoppingList.children[i].remove();
 
-          console.log(arrayOfShoppingLists);
+          deleteShoppingList(nameOfShoppingListToDelete);
+
+          console.log(nameOfShoppingListToDelete);
         }
       }
     }
@@ -548,31 +552,52 @@ function getShoppingList() {
   if (arrayOfShoppingListsAndTheirItems.length !== 0) {
     header1.style.display = "none";
     yourListSpan.textContent = "Your List";
+
+    // const shoppingList = document.createElement("ul");
+    // shoppingList.classList.add("shopping-list");
+
+    // Create the Div that'd house the Shopping list li, id and their content
+
+    for (let i = 0; i < arrayOfShoppingListsAndTheirItems.length; i++) {
+      // create shoppingListDiv
+      shoppingListDiv = document.createElement("div");
+      shoppingListDiv.classList.add("shopping-list-div");
+
+      // create shopping List li to house the name of the shopping list
+      shoppingListLi = document.createElement("li");
+      shoppingListDiv.appendChild(shoppingListLi);
+
+      // create li to house the id of the shopping list
+      shoppingListId = document.createElement("li");
+      shoppingListId.classList.add("id");
+      shoppingListDiv.appendChild(shoppingListId);
+
+      shoppingListLi.textContent =
+        arrayOfShoppingListsAndTheirItems[i][0]["list_name"];
+      shoppingListId.textContent =
+        arrayOfShoppingListsAndTheirItems[i][0]["ID"];
+      shoppingList.appendChild(shoppingListDiv);
+      shoppingListContainer.appendChild(shoppingList);
+      main.appendChild(shoppingListContainer);
+    }
   }
-  // const shoppingList = document.createElement("ul");
-  // shoppingList.classList.add("shopping-list");
+}
 
-  // Create the Div that'd house the Shopping list li, id and their content
-
-  for (let i = 0; i < arrayOfShoppingListsAndTheirItems.length; i++) {
-    // create shoppingListDiv
-    shoppingListDiv = document.createElement("div");
-    shoppingListDiv.classList.add("shopping-list-div");
-
-    // create shopping List li to house the name of the shopping list
-    shoppingListLi = document.createElement("li");
-    shoppingListDiv.appendChild(shoppingListLi);
-
-    // create li to house the id of the shopping list
-    shoppingListId = document.createElement("li");
-    shoppingListId.classList.add("id");
-    shoppingListDiv.appendChild(shoppingListId);
-
-    shoppingListLi.textContent =
-      arrayOfShoppingListsAndTheirItems[i][0]["list_name"];
-    shoppingListId.textContent = arrayOfShoppingListsAndTheirItems[i][0]["ID"];
-    shoppingList.appendChild(shoppingListDiv);
-    shoppingListContainer.appendChild(shoppingList);
-    main.appendChild(shoppingListContainer);
+function deleteShoppingList(listName) {
+  if (localStorage.getItem("arrayOfShoppingListsAndTheirItems") === null) {
+    arrayOfShoppingListsAndTheirItems = [];
+  } else {
+    arrayOfShoppingListsAndTheirItems = JSON.parse(
+      localStorage.getItem("arrayOfShoppingListsAndTheirItems")
+    );
   }
+  for (k = 0; k < arrayOfShoppingListsAndTheirItems.length; k++) {
+    if (arrayOfShoppingListsAndTheirItems[k][0]["list_name"] === listName) {
+      arrayOfShoppingListsAndTheirItems.splice(k, 1);
+    }
+  }
+  localStorage.setItem(
+    "arrayOfShoppingListsAndTheirItems",
+    JSON.stringify(arrayOfShoppingListsAndTheirItems)
+  );
 }
