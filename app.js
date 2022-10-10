@@ -217,7 +217,6 @@ recognition.addEventListener("result", (e) => {
         // listContainer.style.display = "none";
         SLSpecified =
           list[j + 1].charAt(0).toUpperCase() + list[j + 1].slice(1);
-
         console.log(SLSpecified);
 
         // save the item and it's quantity to local storage
