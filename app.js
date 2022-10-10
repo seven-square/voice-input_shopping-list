@@ -1,5 +1,3 @@
-// ***BUILD the shopping list based on the instances/examples given in the question.***
-// Toggle a class for the complete
 const liItemDiv = document.querySelector(".li-item-div");
 const header1 = document.querySelector(".header1");
 
@@ -55,6 +53,7 @@ let nameOfList;
 
 // when the document loads, call this function to display existing shopping lists, and possibly, their items
 document.addEventListener("DOMContentLoaded", getShoppingList);
+
 recognition.addEventListener("result", (e) => {
   // ==================================================================================
   // Create a new List
@@ -79,9 +78,7 @@ recognition.addEventListener("result", (e) => {
 
         arrayOfShoppingLists.push(nameOfList);
         remainingListObject[nameOfList] = nameOfList;
-
-        // for (m = 0; m < arrayOfShoppingListsAndTheirItems.length; m++) {
-        // create a new list called schooling
+        // set display of header to none
         header1.style.display = "none";
 
         // create shoppingListDiv
@@ -140,18 +137,11 @@ recognition.addEventListener("result", (e) => {
         const itemsList = document.createElement("ol");
         itemsList.classList.add("items-list");
 
-        // const shoppingListInDiv = document
-        //   .querySelector(".shopping-list-div")
-        //   .querySelector("li");
-        // }
         console.log(
           arrayOfShoppingLists,
           remainingListObject,
           arrayOfShoppingListsAndTheirItems
         );
-        // }
-        // shoppingList.appendChild(shoppingListDiv);
-        // main.appendChild(shoppingListContainer);
       }
     }
 
@@ -198,35 +188,46 @@ recognition.addEventListener("result", (e) => {
 
   // ===========================================================================
   //   add item to a shopping list
-  /*if (
-    transcript.includes("add") &&
+  if (
+    // transcript.includes("add") &&
     transcript.includes("item") &&
     transcript.includes("quantity") &&
     (transcript.includes("list") || transcript.includes("into"))
   ) {
     let SLSpecified;
-    let list = transcript.split(" ");*/
+    let list = transcript.split(" ");
 
-  // itemHeader.textContent = "item";
-  // quantityHeader.textContent = "quantity";
+    // itemHeader.textContent = "item";
+    // quantityHeader.textContent = "quantity";
 
-  /* let item;
-    let quantity;*/
+    let item;
+    let quantity;
+    let identifier;
 
-  // let list = transcript.split(" ");
-
-  /*for (j = 0; j < list.length; j++) {
+    for (j = 0; j < list.length; j++) {
       if (list[j] === "item") {
         item = list[j + 1];
+        console.log(item);
       }
       if (list[j] === "quantity") {
         quantity = list[j + 2];
+        console.log(quantity);
       }
-      if (list[j] === "list" || list[j] === "into") {*/
+      if (list[j] === "list" || list[j] === "into") {
+        // listContainer.style.display = "none";
+        SLSpecified =
+          list[j + 1].charAt(0).toUpperCase() + list[j + 1].slice(1);
 
-  // listContainer.style.display = "none";
+        console.log(SLSpecified);
 
-  /*SLSpecified = list[j + 1];*/
+        // save the item and it's quantity to local storage
+        saveItemWithQuantityToLocalStorage(item, quantity, SLSpecified);
+        // ***************temporarily************
+      }
+    }
+  }
+  //
+  // identifier = list[j+1]
 
   // for (let i = 0; i < arrayOfShoppingLists.length; i++) {
 
@@ -410,108 +411,6 @@ recognition.addEventListener("result", (e) => {
   //     alert("I didn't quite catch that");
   //   }
 });
-/* getShoppingListcreateShoppingList()
-biggestContainer.insertBefore(shoppingList, addShoppingList)
-*/
-
-// FUNCTIONS
-
-// Create a new shopping List
-// function createNewShoppingList(e) {
-
-// }
-/* When I say "Create a new list called schooling"
--create shopping list Div with name "Schooling" and an ID
--add it to the bigger Div
--add it to Local Storage*/
-// Save Shopping List to Local Storage
-
-// Delete a shopping List
-
-/* when I say "Delete list Foodstuff" 
--remove it(being a child) from the Bigger Div
--remove it's dictionary from Local Storage using it's id*/
-// Delete Shopping List from Local Storage
-
-// Add item & respective quantity to a shopping List
-
-// Add item & respective quantity to a shopping List in Local Storage
-
-// Delete item from shopping List
-/*when I say "Delete item 6 from list Schooling"
--remove item 6 from Schooling shopping list
--remove it from local storage */
-// Delete item from shopping List in local storage
-
-// Get Shopping List from Local Storage so I can recreate them on the page
-/*when the page loads.., create the existing shopping lists and their items
-maybe call the 
- */
-
-/*LOCAL STORAGE
-A list of dictionaries(twice)
-variable names
--content
--id: (Math.floor(Math.random() * 100))
--items
--
--quantity
-*/
-/*
-let shoppingListLS = [
-  {
-    content: "Schooling",
-    id: 344,
-    items: [
-      { item: "Books", quantity: 12 },
-      { quantity: "Pencils", quantity: 12 },
-    ],
-  },
-  {
-    content: "Foodstuffs",
-    id: 667,
-    items: [
-      { item: "Fish", quantity: 2 },
-      { item: "Bread", quantity: 3 },
-    ],
-  },
-];
-
-function saveLocalShoppingList(content, id, items) {
-  let shoppingLists;
-  if (localStorage.getItem(shoppingLists === null)) {
-    shoppingLists = [];
-  } else {
-    shoppingLists = JSON.parse(getItem("shoppingLists"));
-  }
-  // this should be in the create part up there
-  let items = [];
-  let currentShoppingList = { content: SL.innerText, id: SL.id, items: items };
-  //
-  shoppingLists.push(currentShoppingList);
-  localStorage.set("shoppingLists", JSON.stringify(shoppingLists));
-
-  //this should be in the add item part up there
-  let currentItem = { item: item, quantity: quantity };
-  items.push(currentItem);
-  // so as to not overwrite the order
-  for (i = 0; i < shoppingLists.length; i++) {
-    if (shoppingLists[i].content == SLSpecified) {
-      shoppingLists[i].item = items;
-    }
-  }
-  // items = [
-  //   { item: "Books", quantity: 12 },
-  //   { item: "Pencils", quantity: 12 },
-  // ];
-  // currentShoppingList = { content: SL.innerText, id: SL.id, items: items };
-  //
-  // shoppingLists.push(currentShoppingList);
-  localStorage.set("shoppingLists", JSON.stringify(shoppingLists));
-}
-function getLocalShoppingList(content, id, items) {}
-function removeLocalShoppingList(content, id, items) {}
-*/
 
 function saveShoppingList(id, nameOfList) {
   if (localStorage.getItem("arrayOfShoppingListsAndTheirItems") === null) {
@@ -523,7 +422,6 @@ function saveShoppingList(id, nameOfList) {
   }
 
   //  modify arrayOfShoppingListsAndTheirItems as appropriate and save it back to localStorage
-
   listNameObject["list_name"] = nameOfList;
   listNameObject["ID"] = id;
   shoppingListArray = [];
@@ -553,11 +451,7 @@ function getShoppingList() {
     header1.style.display = "none";
     yourListSpan.textContent = "Your List";
 
-    // const shoppingList = document.createElement("ul");
-    // shoppingList.classList.add("shopping-list");
-
     // Create the Div that'd house the Shopping list li, id and their content
-
     for (let i = 0; i < arrayOfShoppingListsAndTheirItems.length; i++) {
       // create shoppingListDiv
       shoppingListDiv = document.createElement("div");
@@ -600,4 +494,58 @@ function deleteShoppingList(listName) {
     "arrayOfShoppingListsAndTheirItems",
     JSON.stringify(arrayOfShoppingListsAndTheirItems)
   );
+}
+
+function saveItemWithQuantityToLocalStorage(
+  nameOfItem,
+  quantityOfItem,
+  nameOfShoppingList
+) {
+  if (localStorage.getItem("arrayOfShoppingListsAndTheirItems") === null) {
+    arrayOfShoppingListsAndTheirItems = [];
+  } else {
+    arrayOfShoppingListsAndTheirItems = JSON.parse(
+      localStorage.getItem("arrayOfShoppingListsAndTheirItems")
+    );
+  }
+
+  for (li = 0; li < arrayOfShoppingListsAndTheirItems.length; li++) {
+    console.log(arrayOfShoppingListsAndTheirItems[li][0]["list_name"]);
+    if (
+      nameOfShoppingList ==
+      arrayOfShoppingListsAndTheirItems[li][0]["list_name"]
+    ) {
+      // check if itemsArray(the second item in SLArray is empty)
+      if (arrayOfShoppingListsAndTheirItems[li].length == 1) {
+        itemsArray = [];
+        itemQuantityObj = {};
+        itemQuantityObj["nameOfItem"] = nameOfItem;
+        itemQuantityObj["quantityOfItem"] = quantityOfItem;
+
+        itemsArray.push(itemQuantityObj);
+        arrayOfShoppingListsAndTheirItems[li].push(itemsArray);
+
+        console.log(
+          arrayOfShoppingListsAndTheirItems,
+          itemsArray,
+          itemQuantityObj
+        );
+      } else {
+        // if the shopping list has at least one item already
+        itemQuantityObj = {};
+        itemQuantityObj["nameOfItem"] = nameOfItem;
+        itemQuantityObj["quantityOfItem"] = quantityOfItem;
+        arrayOfShoppingListsAndTheirItems[li][1].push(itemQuantityObj);
+        console.log(
+          itemQuantityObj,
+          itemsArray,
+          arrayOfShoppingListsAndTheirItems
+        );
+      }
+      localStorage.setItem(
+        "arrayOfShoppingListsAndTheirItems",
+        JSON.stringify(arrayOfShoppingListsAndTheirItems)
+      );
+    }
+  }
 }
