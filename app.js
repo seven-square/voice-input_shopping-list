@@ -92,7 +92,13 @@ recognition.addEventListener("result", (e) => {
 
   if (transcript.includes("create") && transcript.includes("called")) {
     let list = transcript.split(" ");
-
+    if (
+      itemsContainer.style.display !== "none" &&
+      shoppingListContainer.style.display == "none"
+    ) {
+      itemsContainer.style.display = "none";
+      shoppingListContainer.style.display = "block";
+    }
     console.log(list);
 
     for (i = 0; i < list.length; i++) {
@@ -170,33 +176,54 @@ recognition.addEventListener("result", (e) => {
 
   // =================================================
   //   Delete list
-  if (transcript.includes("delete")) {
-    let list = transcript.split(" ");
-    for (i = 0; i < shoppingList.children.length; i++) {
-      for (j = 0; j < list.length; j++) {
-        console.log(
-          shoppingList.children[i].firstChild.textContent.toLowerCase(),
-          list[j].toLowerCase()
-        );
-        if (
-          shoppingList.children[i].firstChild.textContent.toLowerCase() ==
-          list[j].toLowerCase()
-        ) {
-          arrayOfShoppingLists.splice(
-            arrayOfShoppingLists.indexOf(shoppingList.children[i].textContent),
-            1
-          );
-          delete remainingListObject[shoppingList.children[i].textContent];
-          let nameOfShoppingListToDelete =
-            shoppingList.children[i].children[0].textContent;
-          shoppingList.children[i].remove();
-
-          deleteShoppingList(nameOfShoppingListToDelete);
-
-          console.log(nameOfShoppingListToDelete);
-        }
+  if (
+    transcript.includes("delete list") ||
+    transcript.includes("remove list")
+  ) {
+    let instruction = transcript.split(" ");
+    if (
+      itemsContainer.style.display !== "none" &&
+      shoppingListContainer.style.display == "none"
+    ) {
+      itemsContainer.style.display = "none";
+      shoppingListContainer.style.display = "block";
+    }
+    let nameOfShoppingListToDelete = instruction[2];
+    for (list = 0; list < shoppingList.children.length; list++) {
+      if (
+        shoppingList.children[list].children[0].textContent.toLowerCase() ==
+        nameOfShoppingListToDelete.toLowerCase()
+      ) {
+        shoppingList.children[list].remove();
+        deleteShoppingList(nameOfShoppingListToDelete);
       }
     }
+
+    // for (i = 0; i < shoppingList.children.length; i++) {
+    //   for (j = 0; j < list.length; j++) {
+    //     console.log(
+    //       shoppingList.children[i].firstChild.textContent.toLowerCase(),
+    //       list[j].toLowerCase()
+    //     );
+    //     if (
+    //       shoppingList.children[i].firstChild.textContent.toLowerCase() ==
+    //       list[j].toLowerCase()
+    //     ) {
+    //       arrayOfShoppingLists.splice(
+    //         arrayOfShoppingLists.indexOf(shoppingList.children[i].textContent),
+    //         1
+    //       );
+    //       delete remainingListObject[shoppingList.children[i].textContent];
+    //       let nameOfShoppingListToDelete =
+    //         shoppingList.children[i].children[0].textContent;
+    //       shoppingList.children[i].remove();
+
+    //       deleteShoppingList(nameOfShoppingListToDelete);
+
+    //       console.log(nameOfShoppingListToDelete);
+    //     }
+    //   }
+    // }
     console.log(arrayOfShoppingLists, remainingListObject);
   }
 
@@ -208,6 +235,9 @@ recognition.addEventListener("result", (e) => {
     transcript.includes("quantity") &&
     (transcript.includes("list") || transcript.includes("into"))
   ) {
+    if (itemsContainer.style.display == "none") {
+      itemsContainer.style.display = "block";
+    }
     let SLSpecified;
     let list = transcript.split(" ");
 
@@ -223,115 +253,88 @@ recognition.addEventListener("result", (e) => {
         item = list[j + 1];
         console.log(item);
       }
+
       if (list[j] === "quantity") {
         quantity = list[j + 2];
         console.log(quantity);
       }
+
       if (list[j] === "list" || list[j] === "into") {
         // listContainer.style.display = "none";
         SLSpecified =
           list[j + 1].charAt(0).toUpperCase() + list[j + 1].slice(1);
         console.log(SLSpecified);
-
-        // save the item and it's quantity to local storage
-        saveItemWithQuantityToLocalStorage(item, quantity, SLSpecified);
-
-        //Remove the current items present in OL, so that, new items added to another shopping list doesn't add to it
-        removeItemsPresentInOL();
-
-        //call function to display items of the shopping list specified
-        displayItemsOfShoppingList(SLSpecified);
-        // ***************temporarily***, or not (;*********
       }
-
       /* IF ID WAS SPecified
       -call function to Save item to local storage 
       -call function to display items of the list*/
     }
+    if (item && quantity && SLSpecified) {
+      // save the item and it's quantity to local storage
+      saveItemWithQuantityToLocalStorage(item, quantity, SLSpecified);
+
+      //Remove the current items present in OL, so that, new items added to another shopping list doesn't add to it
+      removeItemsPresentInOL();
+
+      //call function to display items of the shopping list specified
+      displayItemsOfShoppingList(SLSpecified);
+    }
+  }
+  // delete item 6(bread) from list schooling || Delete item 6(bread) from list with identifier 001
+  if (
+    transcript.includes("delete item") &&
+    // transcript.includes("item")
+    transcript.includes("list")
+  ) {
+    let nameOfShoppingList;
+    let words = transcript.split(" ");
+    let itemToRemove;
+    for (word = 0; word < words.length; word++) {
+      if (words[word] == "item") {
+        itemToRemove = words[word + 1];
+      }
+      if (words[word] == "list") {
+        nameOfShoppingList = words[word + 1];
+        nameOfShoppingList =
+          words[word + 1].charAt(0).toUpperCase() + words[word + 1].slice(1);
+        // nameOfShoppingList.charAt(0).toUpperCase() +
+        // nameOfShoppingList.slice(1);
+        console.log(nameOfShoppingList);
+      }
+    }
+
+    // remove item from the shopping list in local storage
+    deleteItemFromLocalStorage(itemToRemove, nameOfShoppingList);
+    // if item is (not) a number else...
+
+    // idOfShoppingList
+
+    // loop through the existing ol and delete it
+    if (itemsList.parentElement.style.display == "") {
+      // remove the item from the ol displayed on the page
+      for (i = 0; i < itemsList.children.length; i++) {
+        if (itemsList.children[i].children[0].textContent == itemToRemove) {
+          itemsList.children[i].remove();
+        }
+      }
+    }
+
+    // name of shopping Lists specified or List ID
+
+    /*if (!itemsList.parentElement.style.display == "") {
+      displayItemsOfShoppingList(SLSpecified);
+    }*/
   }
 
-  // identifier = list[j+1]
-
-  // shoppingListName.textContent = arrayOfShoppingLists[i];
-  // arrayOfShoppingListsItems.push(arrayOfShoppingLists[i]);
-
-  /* console.log(arrayOfShoppingLists, remainingListObject);*/
-
-  // place element creation here
-  /*if (item && quantity / 1 == quantity) {
-              
-
-              if (arrayOfShoppingLists[i] in remainingListObject) {*/
-
-  // if (itemsContainer.children[i]) {
-  //   itemsContainer.children[i].style.display = "block";
-  // }
-  // ****
-
-  // create a new paragraph
-
-  // create a new quantityItemDiv
-
-  // CREATE A NEW OL-
-
-  // You can get a Function here, with the item and quantity parameters
-  // create a new li-item-div
-
-  // add it to items list
-
-  /* // use this while cleaning
-            // itemsToShop = itemsContainer.children[i];
-            // itemsList = itemsContainer.children[i].children[2];
-            // itemsContainer.children[k].children[2].appendChild(itemLiDiv);
-
-            // You can get a Function here, with the item and quantity parameters
-            // create a new li-item-div
-            // add it to items list
-            // else {
-            //     alert(`${SLSpecified} is not an existing shopping list`);
-            //   }
-          }
-
-          /*else {
-            if (
-              arrayOfShoppingLists[i].toLowerCase() !==
-              SLSpecified.toLowerCase()
-            ) {
-              if (itemsContainer.children[i]) {
-                itemsContainer.children[i].style.display = "none";
-                console.log(itemsContainer.children[i]);
-              }
-            }
-          }*/
-  // }
-  // else {
-  //   for (i = 0; i < itemsContainer.children.length; i++) {
-  //     if (
-  //       itemsContainer.children[
-  //         i
-  //       ].children[0].textContent.toLowerCase() !==
-  //       SLSpecified.toLowerCase()
-  //     ) {
-  //       itemsContainer.children[i].style.display = "none";
-  //     }
-  //   }
-  // }
-  // else{
-  //   alert(`${SLSpecified} is not an existing shopping list`);
-  // }
-
-  //   }
-  // }
-  // console.log(transcript);
-  // console.log(list);
-  // console.log(item);
-  // console.log(quantity);
-  // }
-
-  //===============================================================================
-  // take me back to my shopping list container
   if (transcript.includes("take me back to my list")) {
-    listContainer.style.display = "flex";
+    // identifier = list[j+1]
+    // else{
+    //   alert(`${SLSpecified} is not an existing shopping list`);
+    // }
+
+    //===============================================================================
+    // take me back to my shopping list container
+    shoppingListContainer.style.display = "";
 
     // display of every items-container is set to none...
     itemsContainer.style.display = "none";
@@ -425,6 +428,9 @@ function deleteShoppingList(listName) {
       localStorage.getItem("arrayOfShoppingListsAndTheirItems")
     );
   }
+
+  // Capitalize the first letter of the name of the Shopping List specified
+  listName = listName.charAt(0).toUpperCase() + listName.slice(1);
   for (k = 0; k < arrayOfShoppingListsAndTheirItems.length; k++) {
     if (arrayOfShoppingListsAndTheirItems[k][0]["list_name"] === listName) {
       arrayOfShoppingListsAndTheirItems.splice(k, 1);
@@ -550,4 +556,43 @@ function displayItemsOfShoppingList(specifiedShoppingList) {
       }
     }
   }
+}
+
+// Create a fuction to remove the item from Local Storage
+function deleteItemFromLocalStorage(item, fromWhichShoppingList) {
+  if (localStorage.getItem("arrayOfShoppingListsAndTheirItems") === null) {
+    arrayOfShoppingListsAndTheirItems = [];
+  } else {
+    arrayOfShoppingListsAndTheirItems = JSON.parse(
+      localStorage.getItem("arrayOfShoppingListsAndTheirItems")
+    );
+  }
+  for (arr = 0; arr < arrayOfShoppingListsAndTheirItems.length; arr++) {
+    console.log("pass 1");
+
+    if (
+      arrayOfShoppingListsAndTheirItems[arr][0]["list_name"].toLowerCase() ==
+      fromWhichShoppingList.toLowerCase()
+    ) {
+      console.log("pass 2");
+      for (
+        itemName = 0;
+        itemName < arrayOfShoppingListsAndTheirItems[arr][1].length;
+        itemName++
+      ) {
+        if (
+          arrayOfShoppingListsAndTheirItems[arr][1][itemName][
+            "nameOfItem"
+          ].toLowerCase() == item.toLowerCase()
+        ) {
+          console.log("pass 3");
+          arrayOfShoppingListsAndTheirItems[arr][1].splice(itemName, 1);
+        }
+      }
+    }
+  }
+  localStorage.setItem(
+    "arrayOfShoppingListsAndTheirItems",
+    JSON.stringify(arrayOfShoppingListsAndTheirItems)
+  );
 }
